@@ -17,7 +17,7 @@ Question-Answer Pairs and COVID-QA documents were added to the ElasticSearch DB.
 
 The preprocessing consisted into removing headers,footers,whitespaces and then splitting all the documents into shards of 100 tokens to improve inference time.
 
-# The System
+# # The Extractive Solution
 
 The system uses the Retriever-Reader paradigm
 
@@ -29,4 +29,25 @@ It consists into three main components:
   2.  the Retriever, which usually uses a sparse representation (BoW,TF-IDF,BM25) of the data or a dense one (embeddings) to compare the question of the user with each document in the knowledge base to retrieve the most relevant.
   3. the Reader, which usually consists into a transformer as in our case, that given a question and a context extracts the answer from the context and returns it.
   
+  For the DB component, a production-ready ElasticSearch DB was used due to its scalability, capability of storing unstructured data and both sparse/dense retrieval support.
   
+  For what regards the other two components, some different models were evaluated for the Retriever and Reader components
+  | Model | Type | Recall |
+|-------|-----------|--------|
+| - | BM25 (Sparse) | 0.85 |
+| Model 2 | EmbeddingRetriever (Dense) | 0.92 |
+| Model 3 | Dense Passage Retriever (Dense) | 0.78 |
+
+
+| Model | F1 Score | EM (Exact-Match) Score | Inference Time |
+|-------|-----------|--------|--------
+| Model 1 | 0.75 | 0.85 | |
+| Model 2 | 0.84 | 0.92 | |
+
+
+Due to limited computing power on AWS EC2 and lack of a GPU, the first model was chosen due to faster inference time and then fine-tuned to improve its performance.
+
+It can be found here: https://huggingface.co/Frizio/minilm-uncased-squad2-covidqa
+  # The Generative Solution
+
+# The FAQ Solution
