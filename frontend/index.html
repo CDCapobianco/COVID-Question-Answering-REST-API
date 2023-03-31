@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="style.css" />
+<html>
+  <script src="scripts.js"></script>
+
+  <body>
+    <div class="container">
+      <div class="left">
+        <div class="header">
+          <h2 class="animation a1">COVID-19 Q&A</h2>
+        </div>
+        <div class="form">
+          <form onsubmit="return call()">
+            <input
+              id="query"
+              name="query"
+              type="text"
+              class="form-field animation a4"
+              placeholder="What's your question?"
+            />
+            <button id="ask" type="submit" class="form-button animation a6">Ask</button>
+          </form>
+        </div>
+      </div>
+      <div class="right">
+        <div class="form">
+          <textarea
+            id="response_text"
+            name="response_text"
+            type="text"
+            readonly
+            style="resize: none"
+            class="right-form animation a4"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
