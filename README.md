@@ -1,4 +1,5 @@
 # COVID-19 Question Answering Pipeline
+(NOT FINISHED YET)
 A COVID-19 Question Answer Pipeline and REST API built with Haystack Framework, ElasticSearch and HF Transformers
 The objective is to explore the various possibilities of the Haystack Framework and to build a scalable system that can be used to answer the most common questions about the COVID-19 with a discrete precision.
 
