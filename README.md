@@ -1,37 +1,32 @@
-# Stack Overflow Questions Tag Prediction
-A questions tag predictor based on the StackSample dataset.
-The objective is to build a model which can assign 1+ tags to a SO question automatically.
-
+# COVID-19 Question Answering Pipeline
+A COVID-19 Question Answer Pipeline and REST API built with Haystack Framework, ElasticSearch and HF Transformers
+The objective is to explore the various possibilities of the Haystack Framework and to build a scalable system that can be used to answer the most common questions about the COVID-19 with a discrete precision.
 
 # The Dataset
-The StackSample dataset contains roughly 10% of the questions on Stack Overflow, with body text, titles, answers, tags and scores for each item (plus some additional data that we won't use in this specific case).
+For the Extractive and Generative System, COVID-QA dataset from deepset was used. The dataset contains in SQuAD format 147 contexts with relative questions and proposed answers
+The data was extracted from several scientific paper from early March 2020. Due to their nature, the language and the content are quite technical and each text is long several pages.
 
-It contains roughly 1.2M rows and each question is associated with 1 or more tags.
+For the FAQ System instead, 6 additional DBs were used for a total of roughly 9k english question-answer pairs. Many of these pairs were crawled from several institutional websites (like WHO and CDC) or other credible sources.
 
+List of the Datasets:
+https://github.com/sunlab-osu/covid-faq
 
 # Data cleaning and Preprocessing
 
-The dataset contains too much data to be processed in a short time on Colab Free hardware, so we just take 1% of the questions (12k items) but we have to be sure that the selected questions are the best possible for the model training.
-To do so, we filter the dataset by removing all the questions with a score < 5. Negative scores in particular are often symptomatic of erroneous or wrong questions.
-After that we sort the rows by the occurrence count of each tag so that we will have a good number of examples for each tag. and finally select the first 12643 questions with the first top 430 tags.
+Question-Answer Pairs and COVID-QA documents were added to the ElasticSearch DB.
 
-For what regards preprocessing, the title and body of each question gets stripped of punctuation, numbers and HTML tags and then, with spaCy library, it gets cleaned of stopwords, tokenized and lemmatized.
+The preprocessing consisted into removing headers,footers,whitespaces and then splitting all the documents into shards of 100 tokens to improve inference time.
+
+# The System
+
+The system uses the Retriever-Reader paradigm
+
+![FOoMr0SWUAMDWik](https://user-images.githubusercontent.com/100691347/229138180-0319477e-7e92-434f-b976-9c47523f2f7e.png)
 
 
-# The Model
-
-Since we want the model to be able of assigning 1+ tags to each question, we are dealing with a multi-label classification and so we need a wrapper for our models (in this case OneVsRestClassifier by Scikit).
-
-Three models were considered for this task: Logistic Regression, Support Vector Machine Classifier, Artificial Neural Network.
-
-The execution of some other models was attempted too (XGBoost and LSTM Neural Network) but these needed too much computational power to converge in a reasonable amount of time so their performance won't be further discussed.
-
-Test size is 20% of the dataset
-
-For comparison purposes, a random decision model would have an accuracy of roughly 0.23%, so its accuracy would be 210 times worse than the ANN and 65 times worse than the Logistic Regression.
-
-| Model  | Test Performance (Accuracy) | Test Performance (Precision Score) | Test Performance (Recall Score) | Test Performance (F1 Score) |
-| ------------- | ------------- | ------------- | ------------- | ------------- |
-| Logistic Regression  | 15.02%  | 88.44%  | 23.72%  | 37.41%  |
-| SVM | 21.89%  | 90.11% |  33.07% |  48.39% |
-| ANN | 48.01% | 63.49% |  49.75% | 49.17% |
+It consists into three main components: 
+  1.  the DB which contains the Knowledge, usually consisting in unstructured data,as in our case.
+  2.  the Retriever, which usually uses a sparse representation (BoW,TF-IDF,BM25) of the data or a dense one (embeddings) to compare the question of the user with each document in the knowledge base to retrieve the most relevant.
+  3. the Reader, which usually consists into a transformer as in our case, that given a question and a context extracts the answer from the context and returns it.
+  
+  
