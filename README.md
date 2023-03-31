@@ -105,3 +105,5 @@ The deployment was done on a AWS EC2 t2.large machine (8 GB RAM, 2 vCPU) using E
 
 A simple front-end HTML+JS page was built to interact with the system
 
+<img width="941" alt="image" src="https://user-images.githubusercontent.com/100691347/229165544-4c842c60-0b15-4a00-8e19-4c591cd8cad1.png">
+
