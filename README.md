@@ -33,7 +33,7 @@ It consists into three main components:
   For the DB component, a production-ready ElasticSearch DB was used due to its scalability, capability of storing unstructured data and both sparse/dense retrieval support.
   
   For what regards the other two components, some different models were evaluated for the Retriever and Reader components
-  | Model | Type | Recall Top_k = 1| Recall Top_k = 5 | Recall Top_k = 10 |
+| Model | Type | Recall Top_k = 1| Recall Top_k = 5 | Recall Top_k = 10 |
 |-------|-----------|--------|--------|--------|
 | - | BM25 (Sparse) | 62.5% | 83.3% | 89.4% |
 | multi-qa-mpnet-base-dot-v1 | EmbeddingRetriever (Dense) | 32.5% | 57.1% | 67.3% |
@@ -41,14 +41,24 @@ It consists into three main components:
 
 
 EmbeddingRetriever was then fine-tuned with the following hyperparameters, to produce the following enhancement:
+
+Training Hyperparameters:
+```
+ batch_size=16,
+ learning_rate=3e-05,
+ n_epochs=3
+
+```
+
 | Model | Type | Recall Top_k = 1| Recall Top_k = 5 | Recall Top_k = 10 |
+|-------|-----------|--------|--------|--------|
 | multi-qa-mpnet-base-dot-v1 | EmbeddingRetriever (Dense) Fine-Tuned | 60% | 81.2% | 87.4% |
 
 
 | Model | F1 Score | EM (Exact-Match) Score | Inference Time |
 |-------|-----------|--------|--------
-| Model 1 | 0.75 | 0.85 | |
-| Model 2 | 0.84 | 0.92 | |
+| roberta-base-squad2 | 0.75 | 0.85 | |
+| minilm-uncased-squad2 | 0.84 | 0.92 | |
 
 
 Due to limited computing power on AWS EC2 and lack of a GPU, the first model was chosen due to faster inference time and then fine-tuned to improve its performance.
