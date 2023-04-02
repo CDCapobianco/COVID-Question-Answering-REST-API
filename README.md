@@ -18,7 +18,7 @@ Question-Answer Pairs and COVID-QA documents were added to the ElasticSearch DB.
 
 The preprocessing consisted into removing headers,footers,whitespaces and then splitting all the documents into shards of 100 tokens to improve inference time.
 
-# # The Extractive Solution
+# The Extractive Solution
 
 The system uses the Retriever-Reader paradigm
 
@@ -33,11 +33,16 @@ It consists into three main components:
   For the DB component, a production-ready ElasticSearch DB was used due to its scalability, capability of storing unstructured data and both sparse/dense retrieval support.
   
   For what regards the other two components, some different models were evaluated for the Retriever and Reader components
-  | Model | Type | Recall |
-|-------|-----------|--------|
-| - | BM25 (Sparse) | 0.85 |
-| Model 2 | EmbeddingRetriever (Dense) | 0.92 |
-| Model 3 | Dense Passage Retriever (Dense) | 0.78 |
+  | Model | Type | Recall Top_k = 1| Recall Top_k = 5 | Recall Top_k = 10 |
+|-------|-----------|--------|--------|--------|
+| - | BM25 (Sparse) | 62.5% | 83.3% | 89.4% |
+| multi-qa-mpnet-base-dot-v1 | EmbeddingRetriever (Dense) | 32.5% | 57.1% | 67.3% |
+| dpr-question_encoder-single-nq-base and dpr-ctx_encoder-single-nq-base | Dense Passage Retriever (Dense) | 19.7% | 36.9% | 47.5% |
+
+
+EmbeddingRetriever was then fine-tuned with the following hyperparameters, to produce the following enhancement:
+| Model | Type | Recall Top_k = 1| Recall Top_k = 5 | Recall Top_k = 10 |
+| multi-qa-mpnet-base-dot-v1 | EmbeddingRetriever (Dense) Fine-Tuned | 60% | 81.2% | 87.4% |
 
 
 | Model | F1 Score | EM (Exact-Match) Score | Inference Time |
@@ -51,7 +56,7 @@ Due to limited computing power on AWS EC2 and lack of a GPU, the first model was
 It can be found here: https://huggingface.co/Frizio/minilm-uncased-squad2-covidqa
 # The Generative Solution
 
-For the Generative Solution, the Reader was replaced with a BART (Encoder-Decoder) Generator pre-trained on posts of three subreddits: r/explainlikeimfive, r/AskHistorians, and r/askscience, plus fine-tuned on the COVID-QA dataset. 
+For the Generative Solution, the Reader was replaced with a BART (Encoder-Decoder) Generator pre-trained on posts of three subreddits: r/explainlikeimfive, r/AskHistorians, and r/askscience, plus fine-tuned on the COVID-QA dataset (credits to https://github.com/Freddavide). 
 The Difference between an Extractive model and a generative ones lies in how the model produces its output: the extractive model extracts it from the context while the generator generates it from scratch.
 
 Follows a pair of examples that highlights advantages and disadvantages of a generative approach :
