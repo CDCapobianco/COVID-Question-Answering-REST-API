@@ -105,8 +105,8 @@ The main difference between the other two approaches is the lack of a reader. Th
 
 For what concerns our use-case,when a set of question-answer pairs is all we have (no large corpus), with a good amount of data (roughly 9k question-answer pairs), ,this approach can easily out-perform the other two for a fraction of the cost:
 
-  | Approach |Large corpus search needed | Answer Reliability | Inference Time |
-|-------|-----------|--------|
+| Approach |Large corpus search needed | Answer Reliability | Inference Time |
+|-------|-----------|--------|--------|
 | Extractive | Yes | Medium | Medium |
 | Generative | Yes | Medium | High |
 | FAQ | No | High | Low |
