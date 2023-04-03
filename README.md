@@ -4,13 +4,16 @@ A COVID-19 Question Answer Pipeline and REST API built with Haystack Framework, 
 The objective is to explore the various possibilities of the Haystack Framework and to build a scalable system that can be used to answer the most common questions about the COVID-19 with a discrete precision.
 
 # The Dataset
-For the Extractive and Generative System, COVID-QA dataset from deepset was used. The dataset contains in SQuAD format 147 contexts with relative questions and proposed answers
-The data was extracted from several scientific paper from early March 2020. Due to their nature, the language and the content are quite technical and each text is long several pages.
+For the Extractive and Generative System, COVID-QA dataset from deepset was used. The dataset contains in SQuAD format 147 papers with a total of 2019 questions and relative answers.
+The data was extracted from several scientific paper dating back to the first pandemic wave (Spring 2020). Due to their nature, the language and the content they are quite technical and each text is long several pages.
 
 For the FAQ System instead, 6 additional DBs were used for a total of roughly 9k english question-answer pairs. Many of these pairs were crawled from several institutional websites (like WHO and CDC) or other credible sources.
 
-List of the Datasets:
-https://github.com/sunlab-osu/covid-faq
+The datasets can be found here:
+- https://github.com/sunlab-osu/covid-faq
+- https://www.kaggle.com/datasets/xhlulu/covidqa
+- https://www.kaggle.com/datasets/narendrageek/covid19-frequent-asked-questions
+- https://github.com/deepset-ai/COVID-QA/blob/master/data/question-answering/COVID-QA.json
 
 # Data cleaning and Preprocessing
 
@@ -55,43 +58,30 @@ Training Hyperparameters:
 | multi-qa-mpnet-base-dot-v1 | EmbeddingRetriever (Dense) Fine-Tuned | 60% | 81.2% | 87.4% |
 
 
-| Model | F1 Score | EM (Exact-Match) Score | Inference Time |
-|-------|-----------|--------|--------
-| roberta-base-squad2 | 0.75 | 0.85 | |
-| minilm-uncased-squad2 | 0.84 | 0.92 | |
+Due to limited computing power on AWS EC2 and lack of a GPU, 'minilm-uncased' pre-trained on SQuAD 2 by deepset was chose due to fast inference time and then fine-tuned on the COVID-QA dataset to improve its performance on our specific task.
 
+The model was open-sourced and can be found here: https://huggingface.co/Frizio/minilm-uncased-squad2-covidqa
 
-Due to limited computing power on AWS EC2 and lack of a GPU, the first model was chosen due to faster inference time and then fine-tuned to improve its performance.
-
-It can be found here: https://huggingface.co/Frizio/minilm-uncased-squad2-covidqa
 # The Generative Solution
 
-For the Generative Solution, the Reader was replaced with a BART (Encoder-Decoder) Generator pre-trained on posts of three subreddits: r/explainlikeimfive, r/AskHistorians, and r/askscience, plus fine-tuned on the COVID-QA dataset (credits to https://github.com/Freddavide). 
+For the Generative Solution, the Reader was replaced with a BART (Encoder-Decoder) Generator pre-trained on posts of three subreddits: r/explainlikeimfive, r/AskHistorians, and r/askscience. 
 The Difference between an Extractive model and a generative ones lies in how the model produces its output: the extractive model extracts it from the context while the generator generates it from scratch.
 
 Follows a pair of examples that highlights advantages and disadvantages of a generative approach :
-
-
 
 ```
 Question:What enzymes have been reported to be linked with severity of infection and various pathological conditions caused by microorganisms?
 Answer:cysteine proteases
 Generated Answer:I'm not sure if this is what you're looking for, but there are a few enzymes that have been shown to be associated with increased susceptibility to certain infections. The most well-known of these is the cysteine-protease inhibitor (CPI), which has been used to treat a variety of bacterial infections.
 
-
-Question:What is the distance between the p4.7 and p12.7 genes in the Irish versus Japanese equine coronavirus variants?
-Answer:544 base pairs
-Generated Answer:The P4.7 and P12.7 genes are highly conserved and are closely related to ECoVs identified in other countries. In contrast, the non-coding region following the P 4.7 gene had deletions or insertions, suggesting that there is potential for ECoV to be over-diagnosed as a causative agent in complex diseases.
-
-
-Question: What is COVID-19?
-Answer:
-Generated Answer:
+Question:Should I wear mask if I'm asymptomatic?
+Answer: Masks are also strongly recommended for those who may have been infected and those taking care of someone who may have the disease
+Generated Answer:If you are asymptomatic, then yes, you should wear a mask. If you are contagious, then no.
 ```
 
 The model is capable of complex phrases generation but its main limit, excluding its long inference time, is its tendency to hallucinate and produce completely wrong answers that, in our context, could be very harmful if taken seriously by the user.
 
-Extractive and FAQ Models don't produce any convincing answer when they fail while a generative model will more often than not produce a credible answer even when the content is completely wrong and this can be very dangerous.
+Extractive and FAQ Models rarely produce any convincing answer when they fail to find one with an high confidence score, a generative model instead will more often than not produce a credible and completely wrong answer and this can dramatically increase the chance of it being taken seriously by the user.
 
 # The FAQ Solution
 For the extractive and generative approaches an highly technical dataset made of scientific papers was considered. In this part of the project however, we will focus on a different system that uses 6 different datasets to build a system that can answer to the more common and less technical questions about COVID-19.
